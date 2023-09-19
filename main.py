@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from util import myf
 import plotly.express as px
 from sklearn.preprocessing import MinMaxScaler
 
