@@ -3,3 +3,4 @@ pandas
 plotly
 scikit-learn
 tqdm
+plotly_resampler
