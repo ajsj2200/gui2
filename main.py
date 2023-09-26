@@ -2,21 +2,36 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from sklearn.preprocessing import MinMaxScaler
+from util import visualizing
+from multiprocessing import Process
+import streamlit.components.v1 as components
 
+st.set_page_config(layout="wide")
 dfs = []
 for i in range(3):
     df = pd.read_csv('data/dfs_{}.0.csv'.format(i))
     df.index = df['Unnamed: 0']
     df.drop('Unnamed: 0', axis=1, inplace=True)
     # scaling
+    df.index = pd.to_datetime(df.index)
     scaler = MinMaxScaler()
     df = pd.DataFrame(scaler.fit_transform(
         df), columns=df.columns, index=df.index)
+    # 모두 float64로 변환
+    df = df.astype('float64')
+    # df.dropna(axis=0, inplace=True)
     dfs.append(df)
 
-st.title('설비1')
-st.plotly_chart(px.line(dfs[0]))
-st.title('설비2')
-st.plotly_chart(px.line(dfs[1]))
-st.title('설비3')
-st.plotly_chart(px.line(dfs[2]))
+for idx, df in enumerate(dfs):
+
+    fig = visualizing.visualing(
+        df, scaler='minmax', show=False, width=800)
+
+    st.title('설비{}'.format(idx+1))
+    port = 44000 + idx
+    proc = Process(
+        target=fig.show_dash, kwargs=dict(mode="external", port=port)
+    ).start()
+    components.iframe(f"http://localhost:{port}", height=700)
+
+# always wide mode
