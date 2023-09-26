@@ -6,7 +6,15 @@ from util import visualizing
 from multiprocessing import Process
 import streamlit.components.v1 as components
 import numpy as np
+import socket
 
+def get_available_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("",0))
+        s.listen(1)
+        port = s.getsockname()[1]
+    return port
+    
 st.set_page_config(layout="wide")
 dfs = []
 for i in range(3):
@@ -29,7 +37,7 @@ for idx, df in enumerate(dfs):
         df, scaler='minmax', show=False, width=800)
 
     st.title('설비{}'.format(idx+1))
-    port = 44000 + int(np.random.randint(0, 1000))
+    port = get_available_port()
     proc = Process(
         target=fig.show_dash, kwargs=dict(mode="external", port=port)
     ).start()
