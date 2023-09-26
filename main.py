@@ -1,3 +1,5 @@
+import socket
+import plotly.io as pio
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -6,16 +8,18 @@ from util import visualizing
 from multiprocessing import Process
 import streamlit.components.v1 as components
 import numpy as np
-import socket
+st.set_page_config(layout="wide")
+pio.templates.default = "plotly"
+
 
 def get_available_port():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("",0))
+        s.bind(("", 0))
         s.listen(1)
         port = s.getsockname()[1]
     return port
-    
-st.set_page_config(layout="wide")
+
+
 dfs = []
 for i in range(3):
     df = pd.read_csv('data/dfs_{}.0.csv'.format(i))
@@ -37,6 +41,7 @@ for idx, df in enumerate(dfs):
         df, scaler='minmax', show=False, width=800)
 
     st.title('설비{}'.format(idx+1))
+
     port = get_available_port()
     proc = Process(
         target=fig.show_dash, kwargs=dict(mode="external", port=port)
