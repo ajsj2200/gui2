@@ -5,6 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 from util import visualizing
 from multiprocessing import Process
 import streamlit.components.v1 as components
+import numpy as np
 
 st.set_page_config(layout="wide")
 dfs = []
@@ -28,7 +29,7 @@ for idx, df in enumerate(dfs):
         df, scaler='minmax', show=False, width=800)
 
     st.title('설비{}'.format(idx+1))
-    port = 44000 + np.random.randint(0, 1000)
+    port = 44000 + int(np.random.randint(0, 1000))
     proc = Process(
         target=fig.show_dash, kwargs=dict(mode="external", port=port)
     ).start()
