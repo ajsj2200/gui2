@@ -28,7 +28,7 @@ for idx, df in enumerate(dfs):
         df, scaler='minmax', show=False, width=800)
 
     st.title('설비{}'.format(idx+1))
-    port = 44000 + idx
+    port = 44000 + np.random.randint(0, 1000)
     proc = Process(
         target=fig.show_dash, kwargs=dict(mode="external", port=port)
     ).start()
